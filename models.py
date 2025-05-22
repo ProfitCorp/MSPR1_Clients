@@ -3,7 +3,7 @@ from database import Base
 from datetime import datetime
 
 class ItemDB(Base):
-    __tablename__ = "Products"
+    __tablename__ = "Customers"
     
     name = Column(String, index=True)
     price = Column(Float)
@@ -11,3 +11,5 @@ class ItemDB(Base):
     color = Column(String)
     stock = Column(Integer)
     id = Column(Integer, primary_key=True, index=True, autoincrement=True)
+
+
