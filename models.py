@@ -8,7 +8,7 @@ from datetime import timezone
 class CustomerDB(Base):
     __tablename__ = "customers"
     
-    id = Column(String, primary_key=True, index=True)  # ID est une string dans ton JSON
+    id = Column(Integer, primary_key=True, index=True, autoincrement=True)
     created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
     name = Column(String)
     username = Column(String)
@@ -19,25 +19,33 @@ class CustomerDB(Base):
     profile_first_name = Column(String)
     profile_last_name = Column(String)
     company_name = Column(String)
-    
-    orders = relationship("OrderDB", back_populates="customer")
+
+    orders = relationship(
+        "OrderDB",
+        back_populates="customer",
+        cascade="all, delete-orphan"  # <- C'est ça qui va supprimer les commandes liées automatiquement
+    )
 
 
 class OrderDB(Base):
     __tablename__ = "orders"
 
-    id = Column(String, primary_key=True, index=True)
+    id = Column(Integer, primary_key=True, index=True, autoincrement=True)
     created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
     customer_id = Column(String, ForeignKey("customers.id"))
-    
+
     customer = relationship("CustomerDB", back_populates="orders")
-    products = relationship("ProductDB", back_populates="order")
+    products = relationship(
+        "ProductDB",
+        back_populates="order",
+        cascade="all, delete-orphan"  # <- ça supprime aussi automatiquement les produits liés
+    )
 
 
 class ProductDB(Base):
     __tablename__ = "products"
 
-    id = Column(String, primary_key=True, index=True)
+    id = Column(Integer, primary_key=True, index=True, autoincrement=True)
     name = Column(String)
     created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
     price = Column(String)  # Format "97,00"
