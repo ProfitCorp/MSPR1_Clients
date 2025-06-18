@@ -66,9 +66,10 @@ def delete_customer(db: Session, customer_id: str):
 def customerdb_to_schema(db_customer: CustomerDB) -> Customer:
     """Convert a CustomerDB instance to a Customer Pydantic model."""
     return Customer(
-        createdAt=db_customer.created_at,
+       # createdAt=db_customer.created_at,
         name=db_customer.name,
         username=db_customer.username,
+        password=db_customer.password,
         firstName=db_customer.first_name,
         lastName=db_customer.last_name,
         address={"postalCode": db_customer.postal_code, "city": db_customer.city},

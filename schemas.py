@@ -52,9 +52,10 @@ class Company(BaseModel):
 
 class Customer(BaseModel):
     id: int
-    createdAt: datetime
+    #createdAt: datetime
     name: str
     username: str
+    password: str
     firstName: str
     lastName: str
     address: Address
@@ -72,3 +73,7 @@ class CustomerPost(BaseModel):
     profile: Profile
     company: Company
     orders: Optional[List[Order]] = []
+
+class LoginInput(BaseModel):
+    username: str
+    password: str

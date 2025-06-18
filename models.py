@@ -1,29 +1,37 @@
-from sqlalchemy import Column, Integer, String, Float, DateTime, ForeignKey
+from sqlalchemy import Column, Integer, String, DateTime, ForeignKey, Table, Float
 from sqlalchemy.orm import relationship
 from database import Base
-from datetime import datetime
-from datetime import timezone
+from datetime import datetime, timezone
+
+# Table d'association entre commandes et produits (Asso_2)
+order_product_association = Table(
+    "asso_2",
+    Base.metadata,
+    Column("id_commandes", Integer, ForeignKey("orders.id"), primary_key=True),
+    Column("id_produit", Integer, ForeignKey("products.id"), primary_key=True)
+)
 
 
 class CustomerDB(Base):
-    __tablename__ = "customers"
-    
+    __tablename__ = "customers"  # Nom d'origine
+
     id = Column(Integer, primary_key=True, index=True, autoincrement=True)
-    created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
-    name = Column(String)
+   # created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
+    name = Column(String(255), nullable=False, default="")
     username = Column(String)
-    first_name = Column(String)
-    last_name = Column(String)
-    postal_code = Column(String)
-    city = Column(String)
-    profile_first_name = Column(String)
-    profile_last_name = Column(String)
-    company_name = Column(String)
+    first_name = Column(String(255), nullable=False, default="")
+    last_name = Column(String(255), nullable=False, default="")
+    postal_code = Column(String(255), nullable=False, default="")
+    city = Column(String(255), nullable=False, default="")
+    profile_first_name = Column(String(255), nullable=False, default="")
+    profile_last_name = Column(String(255), nullable=False, default="")
+    company_name = Column(String(255), nullable=False, default="")
+    password = Column(String)
 
     orders = relationship(
         "OrderDB",
         back_populates="customer",
-        cascade="all, delete-orphan"  # <- C'est ça qui va supprimer les commandes liées automatiquement
+        cascade="all, delete-orphan"
     )
 
 
@@ -32,13 +40,13 @@ class OrderDB(Base):
 
     id = Column(Integer, primary_key=True, index=True, autoincrement=True)
     created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
-    customer_id = Column(String, ForeignKey("customers.id"))
+    customer_id = Column(Integer, ForeignKey("customers.id"))  
 
-    customer = relationship("CustomerDB", back_populates="orders")
+    customer = relationship("CustomerDB", back_populates="orders")  
     products = relationship(
         "ProductDB",
-        back_populates="order",
-        cascade="all, delete-orphan"  # <- ça supprime aussi automatiquement les produits liés
+        secondary=order_product_association,
+        back_populates="orders"
     )
 
 
@@ -48,10 +56,13 @@ class ProductDB(Base):
     id = Column(Integer, primary_key=True, index=True, autoincrement=True)
     name = Column(String)
     created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
-    price = Column(String)  # Format "97,00"
+    price = Column(Float)
     description = Column(String)
     color = Column(String)
-    stock = Column(String)  # "rupture", etc.
-    order_id = Column(String, ForeignKey("orders.id"))
+    stock = Column(Integer)
 
-    order = relationship("OrderDB", back_populates="products")
+    orders = relationship(
+        "OrderDB",
+        secondary=order_product_association,
+        back_populates="products"
+    )
