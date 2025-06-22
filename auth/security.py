@@ -2,6 +2,7 @@ from fastapi import Request, HTTPException
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from jose import jwt, JWTError
 from auth.auth import SECRET_KEY, ALGORITHM
+import bcrypt
 
 class JWTBearer(HTTPBearer):
     def __init__(self, auto_error: bool = True):
@@ -22,3 +23,9 @@ class JWTBearer(HTTPBearer):
             return True
         except JWTError:
             return False
+        
+def hash_password(password: str) -> str:
+    salt = bcrypt.gensalt()
+    hashed = bcrypt.hashpw(password.encode('utf-8'), salt)
+    return hashed.decode('utf-8')
+

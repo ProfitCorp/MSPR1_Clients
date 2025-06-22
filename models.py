@@ -7,26 +7,25 @@ from datetime import datetime, timezone
 order_product_association = Table(
     "asso_2",
     Base.metadata,
-    Column("id_commandes", Integer, ForeignKey("orders.id"), primary_key=True),
-    Column("id_produit", Integer, ForeignKey("products.id"), primary_key=True)
+    Column("id_commandes", Integer, ForeignKey("Orders.id"), primary_key=True),
+    Column("id_produit", Integer, ForeignKey("Products.id"), primary_key=True)
 )
 
 
 class CustomerDB(Base):
-    __tablename__ = "customers"  # Nom d'origine
+    __tablename__ = "Customers"  # Nom d'origine
 
     id = Column(Integer, primary_key=True, index=True, autoincrement=True)
-   # created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
-    name = Column(String(255), nullable=False, default="")
-    username = Column(String)
-    first_name = Column(String(255), nullable=False, default="")
-    last_name = Column(String(255), nullable=False, default="")
-    postal_code = Column(String(255), nullable=False, default="")
-    city = Column(String(255), nullable=False, default="")
-    profile_first_name = Column(String(255), nullable=False, default="")
-    profile_last_name = Column(String(255), nullable=False, default="")
-    company_name = Column(String(255), nullable=False, default="")
-    password = Column(String)
+    username = Column(String(255), nullable=False)
+    password = Column(String(255), nullable=False)
+    role = Column(String(20), nullable=False, default="user")
+    firstname = Column(String(255), nullable=False, default="John")
+    lastname = Column(String(255), nullable=False, default="Doe")
+    street_number = Column(String(5), nullable=False, default="123")
+    street = Column(String(255), nullable=False, default="SomeStreet")
+    postalcode = Column(String(5), nullable=False, default="12345")
+    city = Column(String(255), nullable=False, default="SomeCity")
+    company_name = Column(String(255), nullable=False, default="SomeCompany")
 
     orders = relationship(
         "OrderDB",
@@ -36,11 +35,11 @@ class CustomerDB(Base):
 
 
 class OrderDB(Base):
-    __tablename__ = "orders"
+    __tablename__ = "Orders"
 
     id = Column(Integer, primary_key=True, index=True, autoincrement=True)
-    created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
-    customer_id = Column(Integer, ForeignKey("customers.id"))  
+    # created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
+    customer_id = Column(Integer, ForeignKey("Customers.id"))  
 
     customer = relationship("CustomerDB", back_populates="orders")  
     products = relationship(
@@ -51,11 +50,11 @@ class OrderDB(Base):
 
 
 class ProductDB(Base):
-    __tablename__ = "products"
+    __tablename__ = "Products"
 
     id = Column(Integer, primary_key=True, index=True, autoincrement=True)
     name = Column(String)
-    created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
+    # created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
     price = Column(Float)
     description = Column(String)
     color = Column(String)

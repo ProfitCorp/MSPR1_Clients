@@ -7,6 +7,7 @@ from datetime import datetime, timedelta
 from database import SessionLocal
 from models import CustomerDB
 import os
+import bcrypt
 
 APP_ENV = os.getenv("APP_ENV", "dev")
 db = SessionLocal()
@@ -36,6 +37,9 @@ def authenticate_user(username: str, password: str):
     user = db.query(CustomerDB).where(CustomerDB.username == username).first()
     if not user:
         return False
-    if user.password != password:
+    if not verify_password(password, user.password):
         return False
     return True
+
+def verify_password(password: str, hashed: str) -> bool:
+    return bcrypt.checkpw(password.encode('utf-8'), hashed.encode('utf-8'))

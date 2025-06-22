@@ -12,15 +12,11 @@ def init_admin_user():
     try:
         user_count = db.query(CustomerDB).count()
         if user_count == 0:
-            logger.info("No admin user in database")
             admin = CustomerDB(
                 username=DEFAULT_USERNAME,
                 password=DEFAULT_PASSWORD
             )
             db.add(admin)
             db.commit()
-            logger.info("Admin user created")
-        else:
-            logger.info("Users already exist, skipping admin creation")
     finally:
         db.close()

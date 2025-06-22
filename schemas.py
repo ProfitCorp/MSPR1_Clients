@@ -11,18 +11,18 @@ class OrderDetails(BaseModel):
 
 class Product(BaseModel):
     id: int
-    createdAt: datetime
+    # createdAt: datetime
     name: str
     details: OrderDetails
     stock: int
-    orderId: int
+    # orderId: int
 
 class ProductPost(BaseModel):
     createdAt: datetime
     name: str
     details: OrderDetails
     stock: int
-    orderId: int
+    # orderId: int
 
 
 class Order(BaseModel):
@@ -37,41 +37,41 @@ class OrderPost(BaseModel):
     products: Optional[List[Product]] = []
 
 class Address(BaseModel):
+    streetNumber: str
+    street: str
     postalCode: str
     city: str
 
 
-class Profile(BaseModel):
-    firstName: str
-    lastName: str
+# class Profile(BaseModel):
+#     firstName: str
+#     lastName: str
 
 
-class Company(BaseModel):
-    companyName: str
+# class Company(BaseModel):
+#     companyName: str
 
 
 class Customer(BaseModel):
     id: int
     #createdAt: datetime
-    name: str
     username: str
     password: str
     firstName: str
     lastName: str
     address: Address
-    profile: Profile
-    company: Company
+    companyName: str
     orders: Optional[List[Order]] = []
 
 class CustomerPost(BaseModel):
-    createdAt: datetime
-    name: str
+    #createdAt: datetime
+    #name: str
     username: str
+    password: str
     firstName: str
     lastName: str
     address: Address
-    profile: Profile
-    company: Company
+    companyName: str
     orders: Optional[List[Order]] = []
 
 class LoginInput(BaseModel):
