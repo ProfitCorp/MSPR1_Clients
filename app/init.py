@@ -1,4 +1,5 @@
 import logging
+from auth.security import hash_password
 from database import SessionLocal, DEFAULT_USERNAME, DEFAULT_PASSWORD
 from models import CustomerDB
 
@@ -14,7 +15,7 @@ def init_admin_user():
         if user_count == 0:
             admin = CustomerDB(
                 username=DEFAULT_USERNAME,
-                password=DEFAULT_PASSWORD
+                password=hash_password(DEFAULT_PASSWORD)
             )
             db.add(admin)
             db.commit()
