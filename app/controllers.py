@@ -1,6 +1,6 @@
 """Controllers for customer management using SQLAlchemy ORM."""
 
-from mq.publish import publish_user_update
+from mq.publish import publish_user_update, publish_user_delete
 from sqlalchemy.orm import Session
 from models import CustomerDB, OrderDB, ProductDB
 from schemas import Customer, Order, Product, OrderDetails
@@ -65,6 +65,8 @@ def delete_customer(db: Session, customer_id: str):
         return None
     db.delete(db_customer)
     db.commit()
+
+    publish_user_delete(customer_id)
     return db_customer
 
 
