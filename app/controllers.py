@@ -1,6 +1,6 @@
 """Controllers for customer management using SQLAlchemy ORM."""
 
-from mq.publish import publish_user_update, publish_user_delete
+from mq.publish import publish_user_update, publish_user_delete, publish_user_create
 from sqlalchemy.orm import Session
 from models import CustomerDB, OrderDB, ProductDB
 from schemas import Customer, Order, Product, OrderDetails
@@ -54,6 +54,7 @@ def create_customer(db: Session, customer_data: Customer):
 
     db.commit()
     db.refresh(db_customer)
+    publish_user_create(customer_data.dict())
     return customerdb_to_schema(db_customer)
 
 

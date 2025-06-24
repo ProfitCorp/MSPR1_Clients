@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
-from app.controllers import get_all_customers, create_customer, delete_customer, update_customer
+from controllers import get_all_customers, create_customer, delete_customer, update_customer
 from database import get_db
 from schemas import Customer, CustomerPost, LoginInput
 from fastapi import HTTPException
