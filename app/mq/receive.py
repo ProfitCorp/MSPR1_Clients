@@ -104,3 +104,34 @@ def receive_product_message():
         channel.stop_consuming()
         connection.close()
 
+def receive_product_stock_update():
+    connection = pika.BlockingConnection(pika.ConnectionParameters(host="localhost"))
+    channel = connection.channel()
+
+    channel.exchange_declare(exchange="stock.sync", exchange_type="fanout")
+    channel.queue_declare(queue="api_users_stock", durable=True)
+    channel.queue_bind(exchange="stock.sync", queue="api_users_stock")
+
+    def callback(ch, method, properties, body):
+        data = json.loads(body)
+        product_updates = data.get("data", [])
+        db = SessionLocal()
+        for update in product_updates:
+            update = json.loads(update)
+            product_id = update.get("product_id")
+            if product_id is None:
+                print("[!] Produit sans product_id dans le message:", update)
+                continue
+            update_product(db, product_id, update)
+        db.close()
+        ch.basic_ack(delivery_tag=method.delivery_tag)
+
+    channel.basic_consume(queue="api_users_stock", on_message_callback=callback, auto_ack=False)
+
+    try:
+        print("[*] En attente de messages produits... Ctrl+C pour arrêter.")
+        channel.start_consuming()
+    except KeyboardInterrupt:
+        print("Arrêt du consumer.")
+        channel.stop_consuming()
+        connection.close()
