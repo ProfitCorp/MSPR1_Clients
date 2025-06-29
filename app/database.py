@@ -33,6 +33,8 @@ elif APP_ENV == "dev":
     connect_args = {"check_same_thread": False}
     DEFAULT_USERNAME = "TestUser"
     DEFAULT_PASSWORD = "TestPassword"
+else:
+    logger.critical("Not valable environnement found, please choose between dev or prod")
 
 engine = create_engine(DATABASE_URL, connect_args=connect_args)
 
