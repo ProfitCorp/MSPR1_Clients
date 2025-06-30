@@ -15,7 +15,7 @@ def init_admin_user():
         if user_count == 0:
             admin = CustomerDB(
                 username=DEFAULT_USERNAME,
-                password=hash_password(DEFAULT_PASSWORD)
+                password=hash_password(DEFAULT_PASSWORD),
                 role="admin"
             )
             db.add(admin)
