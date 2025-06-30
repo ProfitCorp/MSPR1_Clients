@@ -2,6 +2,8 @@ import pika
 import json
 import os
 
+os.environ["MQ_HOST"] = "localhost"
+
 def publish_user_update(user_id: int, data: dict):
     connection = pika.BlockingConnection(pika.ConnectionParameters(os.getenv("MQ_HOST")))
     channel = connection.channel()

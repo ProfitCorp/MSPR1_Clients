@@ -31,7 +31,7 @@ def create_access_token(data: dict):
     logger.debug(token)
     return token
 
-def authenticate_user(username: str, password: str):
+def authenticate_user(username: str, password: str, db=db):
     user = db.query(CustomerDB).where(CustomerDB.username == username).first()
     logger.debug(user)
     if not user:
