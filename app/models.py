@@ -3,7 +3,6 @@ from sqlalchemy.orm import relationship
 from database import Base
 from datetime import datetime, timezone
 
-# Table d'association entre commandes et produits (Asso_2)
 order_product_association = Table(
     "asso_2",
     Base.metadata,
@@ -13,7 +12,7 @@ order_product_association = Table(
 
 
 class CustomerDB(Base):
-    __tablename__ = "Customers"  # Nom d'origine
+    __tablename__ = "Customers"
 
     id = Column(Integer, primary_key=True, index=True, autoincrement=True)
     username = Column(String(255), nullable=False)
@@ -38,7 +37,6 @@ class OrderDB(Base):
     __tablename__ = "Orders"
 
     id = Column(Integer, primary_key=True, index=True, autoincrement=True)
-    # created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
     customer_id = Column(Integer, ForeignKey("Customers.id"))  
 
     customer = relationship("CustomerDB", back_populates="orders")  
@@ -53,11 +51,10 @@ class ProductDB(Base):
     __tablename__ = "Products"
 
     id = Column(Integer, primary_key=True, index=True, autoincrement=True)
-    name = Column(String)
-    # created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
+    name = Column(String(255))
     price = Column(Float)
-    description = Column(String)
-    color = Column(String)
+    description = Column(String(255))
+    color = Column(String(255))
     stock = Column(Integer)
 
     orders = relationship(

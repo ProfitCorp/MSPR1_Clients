@@ -1,0 +1,50 @@
+services:
+  customers-api:
+    image: customers-api:latest
+    container_name: customers-api
+    restart: on-failure
+    depends_on:
+      - customers-db
+    env_file: .env
+    environment:
+      - DATABASE_USERNAME
+      - DATABASE_HOST
+      - DATABASE_PORT
+      - DATABASE_NAME
+      - DEFAULT_USERNAME
+      - DEFAULT_PASSWORD
+      - APP_ENV
+      - SECRET_KEY
+      - MQ_HOST
+      - LOG_LEVEL
+    networks:
+      - customers
+      - nginx-proxy
+      - rabbitmq
+
+  customers-db:
+    image: mysql:8.0
+    container_name: customers-db
+    restart: always
+    environment:
+      MYSQL_ALLOW_EMPTY_PASSWORD: yes
+    volumes:
+      - mysql_data:/var/lib/mysql
+      - ./mysql-init:/docker-entrypoint-initdb.d
+    networks:
+      - customers
+
+volumes:
+  mysql_data:
+
+networks:
+  customers:
+    name: customers-network
+    driver: bridge
+  nginx-proxy:
+    external: true
+    name: nginx-proxy-network
+  rabbitmq:
+    external: true
+    name: rabbitmq-network
+  

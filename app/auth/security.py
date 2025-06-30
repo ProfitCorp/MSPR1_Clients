@@ -3,6 +3,9 @@ from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from jose import jwt, JWTError
 from auth.auth import SECRET_KEY, ALGORITHM
 import bcrypt
+from logs.logger import setup_logger
+
+logger = setup_logger()
 
 class JWTBearer(HTTPBearer):
     def __init__(self, auto_error: bool = True):
@@ -11,16 +14,18 @@ class JWTBearer(HTTPBearer):
     async def __call__(self, request: Request):
         credentials: HTTPAuthorizationCredentials = await super().__call__(request)
         if credentials:
-            if not self.verify_jwt(credentials.credentials):
+            payload = self.verify_jwt(credentials.credentials)
+            if not payload:
                 raise HTTPException(status_code=403, detail="Invalid token or expired token")
-            return credentials.credentials
+            return payload
         else:
             raise HTTPException(status_code=403, detail="Invalid authorization code")
 
-    def verify_jwt(self, token: str) -> bool:
+    def verify_jwt(self, token: str):
         try:
             payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
-            return True
+            logger.debug(payload)
+            return payload
         except JWTError:
             return False
         
