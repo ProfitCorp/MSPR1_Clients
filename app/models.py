@@ -51,10 +51,10 @@ class ProductDB(Base):
     __tablename__ = "Products"
 
     id = Column(Integer, primary_key=True, index=True, autoincrement=True)
-    name = Column(String)
+    name = Column(String(255))
     price = Column(Float)
-    description = Column(String)
-    color = Column(String)
+    description = Column(String(255))
+    color = Column(String(255))
     stock = Column(Integer)
 
     orders = relationship(
