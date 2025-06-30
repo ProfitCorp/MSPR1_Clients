@@ -68,6 +68,7 @@ jobs:
           echo "DEFAULT_USERNAME=$DEFAULT_USERNAME" >> .env
           echo "DEFAULT_PASSWORD=$DEFAULT_PASSWORD" >> .env
           echo "APP_ENV=$APP_ENV" >> .env
+          echo "SECRET_KEY=$SECRET_KEY" >> .env
           echo "MQ_HOST=$MQ_HOST" >> .env
           echo "LOG_LEVEL=$LOG_LEVEL" >> .env
           docker compose up -d
