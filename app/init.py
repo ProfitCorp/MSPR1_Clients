@@ -16,6 +16,7 @@ def init_admin_user():
             admin = CustomerDB(
                 username=DEFAULT_USERNAME,
                 password=hash_password(DEFAULT_PASSWORD)
+                role="admin"
             )
             db.add(admin)
             db.commit()
