@@ -42,12 +42,12 @@ jobs:
         run: |
           python -m venv venv
           source venv/bin/activate
-          pip install -r requirements.txt
+          pip install -r ./app/requirements.txt
 
       - name: Linter
         run: |
           source venv/bin/activate
-          pylint --ignore=venv . | tee rapport_pylint.txt
+          pylint --ignore=venv ./app | tee rapport_pylint.txt
       
       # - name: Run test
       #   run: |
