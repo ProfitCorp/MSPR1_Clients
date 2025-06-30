@@ -1,0 +1,77 @@
+name: CI/CD
+
+on:
+  pull_request:
+    branches:
+      - main
+    types:
+      - closed
+
+permissions:
+  contents: write
+
+jobs:
+  test:
+    env:
+      DATABASE_USERNAME: ${{ secrets.DATABASE_USERNAME }}
+      DATABASE_HOST: ${{ secrets.DATABASE_HOST }}
+      DATABASE_PORT: ${{ secrets.DATABASE_PORT }}
+      DATABASE_NAME: ${{ secrets.DATABASE_NAME }}
+      DEFAULT_USERNAME: ${{ secrets.DEFAULT_USERNAME }}
+      DEFAULT_PASSWORD: ${{ secrets.DEFAULT_PASSWORD }}
+      APP_ENV: ${{ secrets.APP_ENV }}
+      SECRET_KEY: ${{ secrets.SECRET_KEY }}
+      MQ_HOST: ${{ secrets.MQ_HOST }}
+      LOG_LEVEL: ${{ secrets.lOG_LEVEL }}
+    if: github.event.pull_request.merged == true
+    name: CD For production
+    runs-on: self-hosted
+
+    
+
+    steps:
+      - name: Checkout du code
+        uses: actions/checkout@v4
+
+      - name: Configurer Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.13'
+
+      - name: Installer les dépendances
+        run: |
+          python -m venv venv
+          source venv/bin/activate
+          pip install -r requirements.txt
+
+      - name: Linter
+        run: |
+          source venv/bin/activate
+          pylint --ignore=venv . | tee rapport_pylint.txt
+      
+      # - name: Run test
+      #   run: |
+      #     source venv/bin/activate
+      #     pytest ./test.py
+      
+      - name: Build image docker
+        run: |
+          docker build -t customers-api .
+          docker tag customers-api customers-api:latest
+      
+      - name: Run docker-compose with env vars
+        run: |
+          echo "DATABASE_USERNAME=$DATABASE_USERNAME" >> .env
+          echo "DATABASE_HOST=$DATABASE_HOST" >> .env
+          echo "DATABASE_PORT=$DATABASE_PORT" >> .env
+          echo "DATABASE_NAME=$DATABASE_NAME" >> .env
+          echo "DEFAULT_USERNAME=$DEFAULT_USERNAME" >> .env
+          echo "DEFAULT_PASSWORD=$DEFAULT_PASSWORD" >> .env
+          echo "APP_ENV=$APP_ENV" >> .env
+          echo "MQ_HOST=$MQ_HOST" >> .env
+          echo "LOG_LEVEL=$LOG_LEVEL" >> .env
+          docker compose up -d
+      
+      - name: check docker
+        run: |
+          docker ps

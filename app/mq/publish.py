@@ -1,8 +1,9 @@
 import pika
 import json
+import os
 
 def publish_user_update(user_id: int, data: dict):
-    connection = pika.BlockingConnection(pika.ConnectionParameters('rabbitmq'))
+    connection = pika.BlockingConnection(pika.ConnectionParameters(os.getenv("MQ_HOST")))
     channel = connection.channel()
 
     channel.exchange_declare(exchange='users.sync', exchange_type='fanout')
@@ -22,7 +23,7 @@ def publish_user_update(user_id: int, data: dict):
     connection.close()
 
 def publish_user_create(data: dict):
-    connection = pika.BlockingConnection(pika.ConnectionParameters('rabbitmq'))
+    connection = pika.BlockingConnection(pika.ConnectionParameters(os.getenv("MQ_HOST")))
     channel = connection.channel()
 
     channel.exchange_declare(exchange='users.sync', exchange_type='fanout')
@@ -41,7 +42,7 @@ def publish_user_create(data: dict):
     connection.close()
 
 def publish_user_delete(user_id: int):
-    connection = pika.BlockingConnection(pika.ConnectionParameters('rabbitmq'))
+    connection = pika.BlockingConnection(pika.ConnectionParameters(os.getenv("MQ_HOST")))
     channel = connection.channel()
 
     channel.exchange_declare(exchange='users.sync', exchange_type='fanout')

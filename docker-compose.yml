@@ -3,8 +3,6 @@ services:
     image: customers-api:latest
     container_name: customers-api
     restart: on-failure
-    ports:
-      - "5000:5000"
     depends_on:
       - customers-db
     env_file: .env
@@ -46,3 +44,7 @@ networks:
   nginx-proxy:
     external: true
     name: nginx-proxy-network
+  rabbitmq:
+    external: true
+    name: rabbitmq-network
+  
