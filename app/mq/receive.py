@@ -4,7 +4,7 @@ from database import SessionLocal
 from mq.db_function import create_order, update_order, delete_order, create_product, update_product, delete_product
 
 def receive_order_message():
-    connection = pika.BlockingConnection(pika.ConnectionParameters(host="localhost"))
+    connection = pika.BlockingConnection(pika.ConnectionParameters(host="rabbitmq"))
     channel = connection.channel()
 
     channel.exchange_declare(exchange="orders.sync", exchange_type="fanout")
@@ -54,7 +54,7 @@ def receive_order_message():
         connection.close()
 
 def receive_product_message():
-    connection = pika.BlockingConnection(pika.ConnectionParameters(host="localhost"))
+    connection = pika.BlockingConnection(pika.ConnectionParameters(host="rabbitmq"))
     channel = connection.channel()
 
     channel.exchange_declare(exchange="products.sync", exchange_type="fanout")
