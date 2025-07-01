@@ -42,12 +42,12 @@ jobs:
         run: |
           python -m venv venv
           source venv/bin/activate
-          pip install -r requirements.txt
+          pip install -r ./app/requirements.txt
 
       - name: Linter
         run: |
           source venv/bin/activate
-          pylint --ignore=venv . | tee rapport_pylint.txt
+          pylint --ignore=venv ./app | tee rapport_pylint.txt
       
       # - name: Run test
       #   run: |
@@ -68,6 +68,7 @@ jobs:
           echo "DEFAULT_USERNAME=$DEFAULT_USERNAME" >> .env
           echo "DEFAULT_PASSWORD=$DEFAULT_PASSWORD" >> .env
           echo "APP_ENV=$APP_ENV" >> .env
+          echo "SECRET_KEY=$SECRET_KEY" >> .env
           echo "MQ_HOST=$MQ_HOST" >> .env
           echo "LOG_LEVEL=$LOG_LEVEL" >> .env
           docker compose up -d
