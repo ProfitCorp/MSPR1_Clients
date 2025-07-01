@@ -1,0 +1,95 @@
+============================= test session starts =============================
+platform win32 -- Python 3.13.3, pytest-8.3.5, pluggy-1.5.0
+rootdir: E:\Dev\MSPR1_Clients\app
+plugins: anyio-4.9.0
+collected 11 items
+
+test.py ......F...F                                                      [100%]
+
+================================== FAILURES ===================================
+_________________ test_update_customer_as_user_other_account __________________
+
+    def test_update_customer_as_user_other_account():
+        headers = auth_headers("user", "user", 2)
+        response = client.put("/customers/1", json={}, headers=headers)
+>       assert response.status_code == 403
+E       assert 422 == 403
+E        +  where 422 = <Response [422 Unprocessable Entity]>.status_code
+
+test.py:141: AssertionError
+_______________________ test_token_generation_and_usage _______________________
+
+    def test_token_generation_and_usage():
+        from auth.auth import authenticate_user
+        db = TestingSessionLocal()
+    
+        user = db.query(CustomerDB).filter_by(username="admin").first()
+        if not user:
+            from utils.hashing import get_password_hash
+            user = CustomerDB(
+                username="admin",
+                password=get_password_hash("adminpass"),
+                role="admin",
+                first_name="Admin",
+                last_name="Test"
+            )
+            db.add(user)
+            db.commit()
+            db.refresh(user)
+    
+>       user = authenticate_user("admin", "adminpass", db)
+
+test.py:176: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+auth\auth.py:39: in authenticate_user
+    if not verify_password(password, user.password):
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+password = 'adminpass', hashed = 'adminpass'
+
+    def verify_password(password: str, hashed: str) -> bool:
+>       return bcrypt.checkpw(password.encode('utf-8'), hashed.encode('utf-8'))
+E       ValueError: Invalid salt
+
+auth\auth.py:45: ValueError
+============================== warnings summary ===============================
+database.py:43
+  E:\Dev\MSPR1_Clients\app\database.py:43: MovedIn20Warning: The ``declarative_base()`` function is now available as sqlalchemy.orm.declarative_base(). (deprecated since: 2.0) (Background on SQLAlchemy 2.0 at: https://sqlalche.me/e/b8d9)
+    Base = declarative_base()
+
+main.py:19
+  E:\Dev\MSPR1_Clients\app\main.py:19: DeprecationWarning: 
+          on_event is deprecated, use lifespan event handlers instead.
+  
+          Read more about it in the
+          [FastAPI docs for Lifespan Events](https://fastapi.tiangolo.com/advanced/events/).
+          
+    @app.on_event("startup")
+
+..\..\Environnements\mspr_product\Lib\site-packages\fastapi\applications.py:4495
+  E:\Dev\Environnements\mspr_product\Lib\site-packages\fastapi\applications.py:4495: DeprecationWarning: 
+          on_event is deprecated, use lifespan event handlers instead.
+  
+          Read more about it in the
+          [FastAPI docs for Lifespan Events](https://fastapi.tiangolo.com/advanced/events/).
+          
+    return self.router.on_event(event_type)
+
+test.py: 10 warnings
+  E:\Dev\MSPR1_Clients\app\auth\auth.py:28: DeprecationWarning: datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).
+    expire = datetime.utcnow() + timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
+
+test.py::test_create_customer_as_admin
+  E:\Dev\MSPR1_Clients\app\controllers.py:57: PydanticDeprecatedSince20: The `dict` method is deprecated; use `model_dump` instead. Deprecated in Pydantic V2.0 to be removed in V3.0. See Pydantic V2 Migration Guide at https://errors.pydantic.dev/2.11/migration/
+    publish_user_create(customer_data.dict())
+
+test.py::test_update_customer_as_admin
+test.py::test_update_customer_as_user_own_account
+  E:\Dev\MSPR1_Clients\app\controllers.py:156: PydanticDeprecatedSince20: The `dict` method is deprecated; use `model_dump` instead. Deprecated in Pydantic V2.0 to be removed in V3.0. See Pydantic V2 Migration Guide at https://errors.pydantic.dev/2.11/migration/
+    publish_user_update(customer_id, customer_data.dict())
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ===========================
+FAILED test.py::test_update_customer_as_user_other_account - assert 422 == 403
+FAILED test.py::test_token_generation_and_usage - ValueError: Invalid salt
+================== 2 failed, 9 passed, 16 warnings in 16.55s ==================
