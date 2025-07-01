@@ -50,11 +50,10 @@ def create_customer(db: Session, customer_data: Customer):
                 order_id=order.id
             )
             db.add(db_product)
-
+    publish_user_create(customer_data.dict())
     db.commit()
     db.refresh(db_customer)
     logger.debug(customer_data)
-    publish_user_create(customer_data.dict())
     return customerdb_to_schema(db_customer)
 
 
@@ -64,9 +63,8 @@ def delete_customer(db: Session, customer_id: str):
     if not db_customer:
         return None
     db.delete(db_customer)
-    db.commit()
-
     publish_user_delete(customer_id)
+    db.commit()
     logger.debug(db_customer)
     return db_customer
 
@@ -149,9 +147,8 @@ def update_customer(db: Session, customer_id: str, customer_data: Customer):
                 order_id=order_data.id,
             )
             db.add(db_product)
-
+    publish_user_update(customer_id, customer_data.dict())
     db.commit()
     db.refresh(db_customer)
     logger.debug(db_customer)
-    publish_user_update(customer_id, customer_data.dict())
     return customerdb_to_schema(db_customer)
